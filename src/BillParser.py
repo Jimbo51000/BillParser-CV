@@ -31,11 +31,18 @@ def preProcessing(image):
     return image;
 
 def drawBillOutLine(input , orig):
+    cnt = getBillOutLine(input)
+    cv.drawContours(orig, [cnt], -1, (0, 255, 0), 1);
+    return orig;
+
+def getBillOutLine(input):
     _, contours, hierarchy = cv.findContours(input, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE);
     sorted_contours = sorted(contours, key=cv.contourArea, reverse=True)
-    cv.drawContours(orig, sorted_contours[0], -1, (0, 255, 0), 1);
-    print len(contours);
-    return orig;
+    cnt = sorted_contours[0];
+    accuracy = 0.1 * cv.arcLength(cnt, True)
+    cnt = cv.approxPolyDP(cnt, accuracy, True)
+    return cnt;
+
 
 
 #main
@@ -50,3 +57,14 @@ preprocessed = preProcessing(input);
 output = drawBillOutLine(preprocessed,image.copy())
 displayImage(output);
 
+#crop the bill out of the image
+cnt = getBillOutLine(preprocessed);
+print cnt[0] , cnt[1] , cnt[2] ,cnt[3]
+if(len(cnt)==4):
+    #it is a rectangle
+    mask = np.zeros(gray.shape, np.uint8);
+    poly = np.array([cnt],np.uint8);
+    cv.fillPoly(mask,poly,1);
+    print input[0][0].dtype, mask[0][0].dtype
+    cv.bitwise_and(input,mask);
+    displayImage(input);
