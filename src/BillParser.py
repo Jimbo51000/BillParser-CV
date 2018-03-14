@@ -62,9 +62,12 @@ cnt = getBillOutLine(preprocessed);
 print cnt[0] , cnt[1] , cnt[2] ,cnt[3]
 if(len(cnt)==4):
     #it is a rectangle
-    mask = np.zeros(gray.shape, np.uint8);
-    poly = np.array([cnt],np.uint8);
-    cv.fillPoly(mask,poly,1);
+    mask = np.zeros(gray.shape, np.int32);
+    poly = np.array([cnt],np.int32);
+    cv.fillPoly(mask,poly,255);
     print input[0][0].dtype, mask[0][0].dtype
-    cv.bitwise_and(input,mask);
-    displayImage(input);
+    test = np.array(input.copy(),np.int32)
+    print test[55][90] , mask[55][90]
+    cv.bitwise_and(test,mask);
+    print test[55][90], mask[55][90]
+    displayImage(test);
