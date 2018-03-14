@@ -65,9 +65,10 @@ if(len(cnt)==4):
     mask = np.zeros(gray.shape, np.int32);
     poly = np.array([cnt],np.int32);
     cv.fillPoly(mask,poly,255);
-    print input[0][0].dtype, mask[0][0].dtype
+    #be wary of the dtype and the size of the arrays
+
     test = np.array(input.copy(),np.int32)
-    print test[55][90] , mask[55][90]
-    cv.bitwise_and(test,mask);
-    print test[55][90], mask[55][90]
+    test = cv.bitwise_and(test,mask);
+    #you cannot display an image of type int32
+    test = np.array(test,np.uint8)
     displayImage(test);
